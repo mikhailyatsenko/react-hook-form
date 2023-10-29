@@ -2,6 +2,7 @@ import React from 'react';
 import Search from '../components/Search';
 import Content from '../components/Content';
 import Pagination from '../components/Pagination';
+import MakeError from '../components/MakeError';
 
 export type Arts = {
   artist_display: string;
@@ -69,7 +70,6 @@ class ArtsLoader extends React.Component<Record<string, never>, State> {
 
   componentDidMount() {
     this.fetchArts();
-    console.log('didmount');
   }
 
   render() {
@@ -82,6 +82,7 @@ class ArtsLoader extends React.Component<Record<string, never>, State> {
           changePage={this.changePage}
           totalPages={this.state.totalPages}
         />
+        <MakeError />
       </>
     );
   }

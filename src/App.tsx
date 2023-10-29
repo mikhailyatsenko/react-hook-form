@@ -1,6 +1,7 @@
 import './App.css';
 import React from 'react';
 import ArtsLoader from './contatiners/ArtsLoader';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 
 class App extends React.Component<
   Record<string, never>,
@@ -9,7 +10,9 @@ class App extends React.Component<
   render() {
     return (
       <>
-        <ArtsLoader />
+        <ErrorBoundary>
+          <ArtsLoader />
+        </ErrorBoundary>
       </>
     );
   }
