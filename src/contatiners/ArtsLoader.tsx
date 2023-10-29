@@ -1,52 +1,87 @@
 import React from 'react';
-
 import Search from '../components/Search';
 import Content from '../components/Content';
+import Pagination from '../components/Pagination';
+
+export type Arts = {
+  artist_display: string;
+  title: string;
+  image_id: string;
+}[];
 
 interface State {
   isLoading: boolean;
-  arts: {};
-  page: number;
-  searchQuery: string;
-  imageLinks: string[];
+  query: string;
+  arts: Arts;
+  currentPage: number;
+  totalPages: number;
 }
 
-class ArtsLoader extends React.Component<{}, State> {
+class ArtsLoader extends React.Component<Record<string, never>, State> {
   state = {
     isLoading: true,
-    arts: {},
-    page: 1,
-    searchQuery: '',
-    imageLinks: []
+    query: localStorage.getItem('query')! ? localStorage.getItem('query')! : '',
+    arts: [],
+    currentPage: 1,
+    totalPages: 1,
   };
 
-  fetchArts = async (query: string = this.state.searchQuery) => {
+  fetchArts = async () => {
     this.setState({
-      searchQuery: query  
+      isLoading: true,
     });
-    const url =
-      `https://api.artic.edu/api/v1/artworks/search?q=${this.state.searchQuery}&limit=5&page=${this.state.page}&fields=id,title,image_id`;
+    const url = `https://api.artic.edu/api/v1/artworks/search?q=${this.state.query}&limit=5&page=${this.state.currentPage}&fields=artist_display,title,image_id`;
+    const response = await fetch(url);
+    const dataArts = await response.json();
+    if (dataArts) {
+      this.setState({
+        arts: [...this.state.arts, ...dataArts.data],
+        isLoading: false,
+        totalPages: dataArts.pagination.total_pages,
+      });
+    }
+  };
 
-    let response = await fetch(url);
-    let arts = await response.json();
-
-    let tesstImageLink =`https://www.artic.edu/iiif/2/${arts.data[0].image_id}/full/843,/0/default.jpg`
-
+  searchByQuery = (searchQuery: string) => {
     this.setState({
-      arts: { ...this.state.arts, arts },
-      imageLinks: [tesstImageLink],
-      isLoading: false,
+      query: searchQuery,
+    });
+    localStorage.setItem('query', searchQuery);
+  };
+
+  changePage = (page: number) => {
+    this.setState({
+      currentPage: page,
     });
   };
+
+  componentDidUpdate(
+    prevProps: Readonly<Record<string, never>>,
+    prevState: Readonly<State>
+  ): void {
+    if (
+      prevState.query !== this.state.query ||
+      prevState.currentPage !== this.state.currentPage
+    ) {
+      this.fetchArts();
+    }
+  }
+
+  componentDidMount() {
+    this.fetchArts();
+    console.log('didmount');
+  }
 
   render() {
-    console.log("ArtsLoader",this.state);
-
     return (
       <>
-        <Search fetchArts={this.fetchArts} />
-        {/* <div onClick={this.fetchArts}>search</div> */}
-        <Content imageLinks={this.state.imageLinks} />
+        <Search searchByQuery={this.searchByQuery} query={this.state.query} />
+        <Content arts={this.state.arts} isLoading={this.state.isLoading} />
+        <Pagination
+          currentPage={this.state.currentPage}
+          changePage={this.changePage}
+          totalPages={this.state.totalPages}
+        />
       </>
     );
   }
