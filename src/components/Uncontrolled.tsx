@@ -1,4 +1,4 @@
-const Uncontrolled = () => {
+const Controlled = () => {
   return (
     <div>
       <form>
@@ -9,7 +9,7 @@ const Uncontrolled = () => {
         <input type="text" id="age" />
         <p>Error</p>
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" />
+        <input id="email" />
         <p>Error</p>
         <label htmlFor="pass1">Password</label>
         <input type="password" id="pass1" />
@@ -17,9 +17,13 @@ const Uncontrolled = () => {
         <label htmlFor="pass2">Repeat password</label>
         <input type="password" id="pass2" />
         <p>Error</p>
-
         <label htmlFor="country">Country</label>
-        <input type="text" id="country" />
+        <select name="country" id="country">
+          <option value="ua">Ukraine</option>
+          <option value="de">Deutschland</option>
+          <option value="ru">Russia</option>
+          <option value="fr">France</option>
+        </select>
         <p>Error</p>
 
         <p>Gender</p>
@@ -39,11 +43,7 @@ const Uncontrolled = () => {
           <div>
             <label htmlFor="terms_yes">Yes</label>
 
-            <input type="radio" id="terms_yes" name="terms" value="yes" />
-          </div>
-          <div>
-            <label htmlFor="terms_no">No</label>
-            <input type="radio" id="terms_no" name="terms" value="no" />
+            <input type="checkbox" id="terms" name="terms" />
           </div>
         </div>
 
@@ -56,4 +56,4 @@ const Uncontrolled = () => {
   );
 };
 
-export default Uncontrolled;
+export default Controlled;
