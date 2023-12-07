@@ -3,20 +3,29 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler } from 'react-hook-form';
 import { fileConverter } from '../helpers/fileConverter';
 import { validationShema } from '../validation/validationSchema';
+import { useAppDispatch } from '../store';
+import { useAppSelector } from '../store';
+import { setData } from '../store/reducers/formDataSlice';
 
 interface Form {
   name: string;
   age: number;
   email: string;
   password: string;
-  passwordConfirmation: string;
+  passwordConfirm: string;
   country: string;
   gender: string;
   terms: boolean;
   img?: unknown | File;
 }
 
+// interface FormWithBase64Img extends Form {
+//   img: string;
+// }
+
 const Controlled = () => {
+  const { countries } = useAppSelector((store) => store.CountriesListSlice);
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -31,9 +40,9 @@ const Controlled = () => {
   const onSubmit: SubmitHandler<Form> = async (data) => {
     if (data.img instanceof File) {
       const base64Image = await fileConverter(data.img);
-      console.log(base64Image);
-    } else {
-      console.error('Invalid picture type');
+
+      const dataWithBase64Img = { ...data, img: base64Image };
+      dispatch(setData(dataWithBase64Img));
     }
   };
 
@@ -47,6 +56,7 @@ const Controlled = () => {
 
   return (
     <div>
+      <p>controlled</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="name">Name</label>
         <input {...register('name')} type="text" id="name" />
@@ -58,28 +68,20 @@ const Controlled = () => {
         <input {...register('email')} id="email" />
         <p>{errors.email?.message}</p>
         <label htmlFor="password">Password</label>
-        <input {...register('password')} type="password" id="pass1" />
+        <input {...register('password')} type="password" id="password" />
         <p>
           {errors.password?.message
             ? 'Password should contain at least one digit, one lowercase letter, one uppercase letter and special character'
             : ''}
         </p>
-        <label htmlFor="pass2">Repeat password</label>
+        <label htmlFor="password2">Repeat password</label>
 
         <input
-          {...register('passwordConfirmation')}
+          {...register('passwordConfirm')}
           type="password"
-          id="pass2"
+          id="password-comfirm"
         />
-        <p>{errors.passwordConfirmation?.message}</p>
-        <label htmlFor="country">Country</label>
-        <select {...register('country')} name="country" id="country">
-          <option value="ua">Ukraine</option>
-          <option value="de">Deutschland</option>
-          <option value="ru">Russia</option>
-          <option value="fr">France</option>
-        </select>
-        {/* <p>Error</p> */}
+        <p>{errors.passwordConfirm?.message}</p>
 
         <p>Gender</p>
         <div>
@@ -103,7 +105,7 @@ const Controlled = () => {
         <p>{errors.gender?.message}</p>
 
         <div>
-          <label htmlFor="terms_yes">I accept the terms</label>
+          <label htmlFor="terms">I accept the terms</label>
           <input
             {...register('terms')}
             type="checkbox"
@@ -112,9 +114,22 @@ const Controlled = () => {
           />
         </div>
         <p>{errors.terms?.message}</p>
+
         <label htmlFor="image">Image</label>
         <input type="file" id="image" onChange={(e) => handleFileChange(e)} />
         <p>{errors.img?.message}</p>
+
+        <label htmlFor="country">Country</label>
+        <select {...register('country')} name="country" id="country">
+          {countries.map((country, index) => {
+            return (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            );
+          })}
+        </select>
+        {/* <p>Error</p> */}
 
         <button>Submit</button>
       </form>

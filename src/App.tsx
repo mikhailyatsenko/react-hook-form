@@ -1,19 +1,20 @@
-import { Route, Routes } from 'react-router-dom';
-import Main from './components/Main';
-import Uncontrolled from './components/Uncontrolled';
-import Controlled from './components/Controlled';
-import Error from './components/Error';
+// import Main from './components/Main';
+import { Outlet } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import './App.css';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Main />} />
-      <Route path="/controlled" element={<Controlled />} />
-      <Route path="/uncontrolled" element={<Uncontrolled />} />
-      <Route path="/*" element={<Error />} />
-    </Routes>
+    <main>
+      <h1>Choose the form:</h1>
+      <nav>
+        <Link to="/">Main</Link>
+        <Link to="/controlled">Controlled</Link>
+        <Link to="/uncontrolled">Uncontrolled form</Link>
+      </nav>
+      <Outlet />
+    </main>
   );
 }
 

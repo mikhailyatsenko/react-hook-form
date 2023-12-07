@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface InitialState {
   name: string;
-  age: string;
+  age: number | undefined;
   email: string;
   password: string;
-  passwordConfirmation: string;
+  passwordConfirm: string;
   country: string;
   gender: string;
   terms: boolean;
@@ -14,10 +14,10 @@ interface InitialState {
 
 const initialState: InitialState = {
   name: '',
-  age: '',
+  age: undefined,
   email: '',
   password: '',
-  passwordConfirmation: '',
+  passwordConfirm: '',
   country: '',
   gender: '',
   terms: false,
@@ -30,6 +30,7 @@ export const dataSlice = createSlice({
   reducers: {
     setData(state, action: PayloadAction<InitialState>) {
       state = action.payload;
+      console.log('state', state);
     },
   },
 });

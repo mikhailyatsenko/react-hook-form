@@ -1,54 +1,171 @@
-const Controlled = () => {
+import { useRef, useState } from 'react';
+// import { useAppDispatch } from '../store';
+import { useAppSelector } from '../store';
+import { validationShema } from '../validation/validationSchema';
+import { ValidationError } from 'yup';
+// import { fileConverter } from '../helpers/fileConverter';
+// import { useNavigate } from 'react-router';
+
+const Uncontrolled = () => {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const ageRef = useRef<HTMLInputElement>(null);
+  const genderMaleRef = useRef<HTMLInputElement>(null);
+  const genderFemaleRef = useRef<HTMLInputElement>(null);
+  const countryRef = useRef<HTMLInputElement>(null);
+  const imgRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordConfirmRef = useRef<HTMLInputElement>(null);
+  const termsRef = useRef<HTMLInputElement>(null);
+  // const navigate = useNavigate();
+  const { countries } = useAppSelector((store) => store.CountriesListSlice);
+  const [errors, setErrors] = useState<Errors>({});
+
+  // const dispatch = useAppDispatch();
+
+  interface Form {
+    name?: string;
+    age?: number;
+    email?: string;
+    password?: string;
+    passwordConfirm?: string;
+    country?: string;
+    gender?: string;
+    terms?: boolean;
+    img?: File;
+  }
+
+  interface Errors {
+    name?: string;
+    age?: string;
+    email?: string;
+    password?: string;
+    passwordConfirm?: string;
+    country?: string;
+    gender?: string;
+    terms?: string;
+    img?: string;
+  }
+
+  async function validateData(data: Form) {
+    try {
+      validationShema.validateSync(data, { abortEarly: false });
+      return true;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.log(error.inner);
+
+        const validationErrors: Record<string, string> = {};
+        error.inner.forEach((err) => {
+          if (typeof err.path === 'string' && !validationErrors[err.path]) {
+            validationErrors[err.path] = err.message;
+          }
+        });
+        setErrors(validationErrors);
+        if (Object.keys(validationErrors).length === 0) {
+          return false;
+        }
+      }
+    }
+  }
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const data: Form = {
+      terms: termsRef.current?.checked,
+      age: Number(ageRef.current?.value),
+      passwordConfirm: passwordConfirmRef.current?.value,
+      country: countryRef.current?.value,
+      email: emailRef.current?.value,
+      gender: genderMaleRef.current?.checked
+        ? 'male'
+        : genderFemaleRef.current?.checked
+          ? 'female'
+          : undefined,
+      name: nameRef.current?.value,
+      password: passwordRef.current?.value,
+      img: imgRef.current?.files ? imgRef.current?.files[0] : undefined,
+    };
+    const isValidate = await validateData(data);
+    console.log(isValidate);
+    // if (isValidate && data.img) {
+    // const base64Image = await fileConverter(data.img);
+    // const newData = { ...data, picture: base64Image };
+    // const newArrData = [newData, ...actualData];
+    // dispatch(setData(newArrData));
+    // navigate('/');
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && imgRef.current) {
+      imgRef.current.files = event.target.files;
+    }
+  };
+
   return (
     <div>
-      <form>
+      <p>uncontrolled</p>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name</label>
-        <input type="text" id="name" />
-        <p>Error</p>
+        <input ref={nameRef} type="text" id="name" />
+        {errors.name && <p>{errors.name}</p>}
         <label htmlFor="age">Age</label>
-        <input type="text" id="age" />
-        <p>Error</p>
+        <input ref={ageRef} type="number" id="age" />
+        {errors.age && <p>{errors.age}</p>}
         <label htmlFor="email">Email</label>
-        <input id="email" />
-        <p>Error</p>
-        <label htmlFor="pass1">Password</label>
-        <input type="password" id="pass1" />
-        <p>Error</p>
-        <label htmlFor="pass2">Repeat password</label>
-        <input type="password" id="pass2" />
-        <p>Error</p>
-        <label htmlFor="country">Country</label>
-        <select name="country" id="country">
-          <option value="ua">Ukraine</option>
-          <option value="de">Deutschland</option>
-          <option value="ru">Russia</option>
-          <option value="fr">France</option>
-        </select>
-        <p>Error</p>
+        <input ref={emailRef} id="email" />
+        {errors.email && <p>{errors.email}</p>}
+        <label htmlFor="password">Password</label>
+        <input ref={passwordRef} type="password" id="password" />
+        {errors.password && <p>{errors.password}</p>}
+        <label htmlFor="password2">Repeat password</label>
+
+        <input ref={passwordConfirmRef} type="password" id="password-confirm" />
+        {errors.passwordConfirm && <p>{errors.passwordConfirm}</p>}
 
         <p>Gender</p>
         <div>
-          <div>
-            <label htmlFor="male">Male</label>
-            <input type="radio" id="male" name="gender" value="male" />
-          </div>
-          <div>
-            <label htmlFor="female">Female</label>
-            <input type="radio" id="female" name="gender" value="female" />
-          </div>
+          <label htmlFor="male">Male</label>
+          <input
+            ref={genderMaleRef}
+            type="radio"
+            id="male"
+            name="gender"
+            value="male"
+          />
+          <label htmlFor="female">Female</label>
+          <input
+            ref={genderFemaleRef}
+            type="radio"
+            id="female"
+            name="gender"
+            value="female"
+          />
         </div>
+        {errors.gender && <p>{errors.gender}</p>}
 
-        <p>I accept the terms</p>
         <div>
-          <div>
-            <label htmlFor="terms_yes">Yes</label>
-
-            <input type="checkbox" id="terms" name="terms" />
-          </div>
+          <label htmlFor="terms">I accept the terms</label>
+          <input ref={termsRef} type="checkbox" id="terms" name="terms" />
         </div>
+        {errors.terms && <p>{errors.terms}</p>}
 
         <label htmlFor="image">Image</label>
-        <input type="file" id="image" />
+        <input type="file" id="image" onChange={(e) => handleFileChange(e)} />
+        {errors.img && <p>{errors.img}</p>}
+
+        <label htmlFor="country">Country</label>
+        <input ref={countryRef} list="countries" name="country" id="country" />
+        <datalist id="countries">
+          {countries.map((country, index) => {
+            return (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            );
+          })}
+        </datalist>
+
+        {errors.country && <p>{errors.country}</p>}
 
         <button>Submit</button>
       </form>
@@ -56,4 +173,4 @@ const Controlled = () => {
   );
 };
 
-export default Controlled;
+export default Uncontrolled;

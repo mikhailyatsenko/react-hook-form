@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import formDataReducer from './reducers/formDataSlice';
+import CountriesListSlice from './reducers/countriesSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 export const store = configureStore({
-  reducer: formDataReducer,
+  reducer: { formDataReducer, CountriesListSlice },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
