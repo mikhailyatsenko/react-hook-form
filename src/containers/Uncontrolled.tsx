@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-// import { useAppDispatch } from '../store';
+import { useAppDispatch } from '../store';
 import { useAppSelector } from '../store';
 import { validationShema } from '../validation/validationSchema';
 import { ValidationError } from 'yup';
-// import { fileConverter } from '../helpers/fileConverter';
-// import { useNavigate } from 'react-router';
+import { fileConverter } from '../helpers/fileConverter';
+import { useNavigate } from 'react-router';
+import { setData } from '../store/reducers/formDataSlice';
 
 const Uncontrolled = () => {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -17,22 +18,23 @@ const Uncontrolled = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordConfirmRef = useRef<HTMLInputElement>(null);
   const termsRef = useRef<HTMLInputElement>(null);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { countries } = useAppSelector((store) => store.CountriesListSlice);
+
   const [errors, setErrors] = useState<Errors>({});
 
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   interface Form {
-    name?: string;
-    age?: number;
-    email?: string;
-    password?: string;
-    passwordConfirm?: string;
-    country?: string;
-    gender?: string;
-    terms?: boolean;
-    img?: File;
+    name: string | undefined;
+    age: number | undefined;
+    email: string | undefined;
+    password: string | undefined;
+    passwordConfirm: string | undefined;
+    country: string | undefined;
+    gender: string | undefined;
+    terms: boolean | undefined;
+    img: File | undefined;
   }
 
   interface Errors {
@@ -53,8 +55,6 @@ const Uncontrolled = () => {
       return true;
     } catch (error) {
       if (error instanceof ValidationError) {
-        console.log(error.inner);
-
         const validationErrors: Record<string, string> = {};
         error.inner.forEach((err) => {
           if (typeof err.path === 'string' && !validationErrors[err.path]) {
@@ -62,12 +62,11 @@ const Uncontrolled = () => {
           }
         });
         setErrors(validationErrors);
-        if (Object.keys(validationErrors).length === 0) {
-          return false;
-        }
+        return false;
       }
     }
   }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data: Form = {
@@ -85,19 +84,22 @@ const Uncontrolled = () => {
       password: passwordRef.current?.value,
       img: imgRef.current?.files ? imgRef.current?.files[0] : undefined,
     };
+
     const isValidate = await validateData(data);
-    console.log(isValidate);
-    // if (isValidate && data.img) {
-    // const base64Image = await fileConverter(data.img);
-    // const newData = { ...data, picture: base64Image };
-    // const newArrData = [newData, ...actualData];
-    // dispatch(setData(newArrData));
-    // navigate('/');
+    console.log(data, isValidate);
+    if (isValidate && data.img) {
+      const base64Image = await fileConverter(data.img);
+      const newData = { ...data, img: base64Image };
+
+      dispatch(setData(newData));
+      navigate('/');
+    }
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && imgRef.current) {
       imgRef.current.files = event.target.files;
+      console.log(imgRef.current.files);
     }
   };
 
@@ -150,7 +152,12 @@ const Uncontrolled = () => {
         {errors.terms && <p>{errors.terms}</p>}
 
         <label htmlFor="image">Image</label>
-        <input type="file" id="image" onChange={(e) => handleFileChange(e)} />
+        <input
+          ref={imgRef}
+          type="file"
+          id="image"
+          onChange={(e) => handleFileChange(e)}
+        />
         {errors.img && <p>{errors.img}</p>}
 
         <label htmlFor="country">Country</label>

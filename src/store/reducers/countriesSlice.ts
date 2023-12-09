@@ -16,4 +16,3 @@ export const CountriesListSlice = createSlice({
 });
 
 export default CountriesListSlice.reducer;
-// export const { setData } = dataSlice.actions;

@@ -1,36 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface InitialState {
-  name: string;
+interface FormData {
+  name: string | undefined;
   age: number | undefined;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-  country: string;
-  gender: string;
-  terms: boolean;
+  email: string | undefined;
+  password: string | undefined;
+  passwordConfirm: string | undefined;
+  country: string | undefined;
+  gender: string | undefined;
+  terms: boolean | undefined;
   img: string;
 }
 
-const initialState: InitialState = {
-  name: '',
-  age: undefined,
-  email: '',
-  password: '',
-  passwordConfirm: '',
-  country: '',
-  gender: '',
-  terms: false,
-  img: '',
-};
+type InitialState = { data: FormData[] };
+
+const initialState: InitialState = { data: [] };
 
 export const dataSlice = createSlice({
   name: 'FormData',
   initialState,
   reducers: {
-    setData(state, action: PayloadAction<InitialState>) {
-      state = action.payload;
-      console.log('state', state);
+    setData(state, action: PayloadAction<FormData>) {
+      state.data.push(action.payload);
     },
   },
 });

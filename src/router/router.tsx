@@ -1,7 +1,7 @@
 import App from '../App';
-import Controlled from '../components/Controlled';
-import Uncontrolled from '../components/Uncontrolled';
-import Main from '../components/Main';
+import Controlled from '../containers/Controlled';
+import Uncontrolled from '../containers/Uncontrolled';
+import Main from '../containers/Main';
 import { createBrowserRouter } from 'react-router-dom';
 
 const routes = [
