@@ -22,6 +22,7 @@ const Uncontrolled = () => {
   const { countries } = useAppSelector((store) => store.CountriesListSlice);
 
   const [errors, setErrors] = useState<Errors>({});
+  const [isDisable, setIsDisable] = useState(true);
 
   const dispatch = useAppDispatch();
 
@@ -69,6 +70,7 @@ const Uncontrolled = () => {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     const data: Form = {
       terms: termsRef.current?.checked,
       age: Number(ageRef.current?.value),
@@ -86,14 +88,14 @@ const Uncontrolled = () => {
     };
 
     const isValidate = await validateData(data);
-    console.log(data, isValidate);
+
     if (isValidate && data.img) {
       const base64Image = await fileConverter(data.img);
       const newData = { ...data, img: base64Image };
 
       dispatch(setData(newData));
       navigate('/');
-    }
+    } else setIsDisable(true);
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,78 +105,208 @@ const Uncontrolled = () => {
     }
   };
 
+  const isButtonActive = async (inputName: string) => {
+    setErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      delete updatedErrors[inputName as keyof Errors];
+      return updatedErrors;
+    });
+    if (
+      nameRef.current?.value &&
+      ageRef.current?.value &&
+      (genderMaleRef.current?.checked || genderFemaleRef.current?.checked) &&
+      countryRef.current?.value &&
+      imgRef.current?.value &&
+      emailRef.current?.value &&
+      passwordRef.current?.value &&
+      passwordConfirmRef.current?.value &&
+      termsRef.current?.checked
+    ) {
+      setIsDisable(false);
+    } else setIsDisable(true);
+  };
+
   return (
-    <div>
-      <p>uncontrolled</p>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name</label>
-        <input ref={nameRef} type="text" id="name" />
-        {errors.name && <p>{errors.name}</p>}
-        <label htmlFor="age">Age</label>
-        <input ref={ageRef} type="number" id="age" />
-        {errors.age && <p>{errors.age}</p>}
-        <label htmlFor="email">Email</label>
-        <input ref={emailRef} id="email" />
-        {errors.email && <p>{errors.email}</p>}
-        <label htmlFor="password">Password</label>
-        <input ref={passwordRef} type="password" id="password" />
-        {errors.password && <p>{errors.password}</p>}
-        <label htmlFor="password2">Repeat password</label>
-
-        <input ref={passwordConfirmRef} type="password" id="password-confirm" />
-        {errors.passwordConfirm && <p>{errors.passwordConfirm}</p>}
-
-        <p>Gender</p>
-        <div>
-          <label htmlFor="male">Male</label>
+    <div className="form-container">
+      <p>Uncontrolled form without &quot;React Hook Form&quot;</p>
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label htmlFor="name">Name</label>
           <input
-            ref={genderMaleRef}
-            type="radio"
-            id="male"
-            name="gender"
-            value="male"
+            onChange={() => isButtonActive('name')}
+            ref={nameRef}
+            type="text"
+            id="name"
           />
-          <label htmlFor="female">Female</label>
+          <div className="error-container">
+            <p className={`error-message ${errors.name && 'show-error'}`}>
+              {errors.name && errors.name}
+            </p>
+          </div>
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="age">Age</label>
           <input
-            ref={genderFemaleRef}
-            type="radio"
-            id="female"
-            name="gender"
-            value="female"
+            onChange={() => isButtonActive('age')}
+            ref={ageRef}
+            type="number"
+            id="age"
           />
+          <div className="error-container">
+            <p className={`error-message ${errors.age && 'show-error'}`}>
+              {errors.age && errors.age}
+            </p>
+          </div>
         </div>
-        {errors.gender && <p>{errors.gender}</p>}
-
-        <div>
-          <label htmlFor="terms">I accept the terms</label>
-          <input ref={termsRef} type="checkbox" id="terms" name="terms" />
+        <div className="input-group">
+          <label htmlFor="email">Email</label>
+          <input
+            onChange={() => isButtonActive('email')}
+            ref={emailRef}
+            id="email"
+          />
+          <div className="error-container">
+            <p className={`error-message ${errors.email && 'show-error'}`}>
+              {errors.email && errors.email}
+            </p>
+          </div>
         </div>
-        {errors.terms && <p>{errors.terms}</p>}
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <input
+            onChange={() => isButtonActive('password')}
+            ref={passwordRef}
+            type="password"
+            id="password"
+          />
+          <div className="error-container">
+            <p className={`error-message ${errors.password && 'show-error'}`}>
+              {errors.password && errors.password}
+            </p>
+          </div>
+        </div>
+        <div className="input-group">
+          <label htmlFor="password2">Repeat password</label>
+          <input
+            onChange={() => isButtonActive('passwordConfirm')}
+            ref={passwordConfirmRef}
+            type="password"
+            id="password-confirm"
+          />
+          <div className="error-container">
+            <p
+              className={`error-message ${
+                errors.passwordConfirm && 'show-error'
+              }`}
+            >
+              {errors.passwordConfirm && errors.passwordConfirm}
+            </p>
+          </div>
+        </div>
 
-        <label htmlFor="image">Image</label>
-        <input
-          ref={imgRef}
-          type="file"
-          id="image"
-          onChange={(e) => handleFileChange(e)}
-        />
-        {errors.img && <p>{errors.img}</p>}
+        <div className="input-group">
+          <label htmlFor="country">Country</label>
+          <input
+            onChange={() => isButtonActive('country')}
+            ref={countryRef}
+            list="countries"
+            name="country"
+            id="country"
+          />
+          <datalist id="countries">
+            {countries.map((country, index) => {
+              return (
+                <option key={index} value={country}>
+                  {country}
+                </option>
+              );
+            })}
+          </datalist>
 
-        <label htmlFor="country">Country</label>
-        <input ref={countryRef} list="countries" name="country" id="country" />
-        <datalist id="countries">
-          {countries.map((country, index) => {
-            return (
-              <option key={index} value={country}>
-                {country}
-              </option>
-            );
-          })}
-        </datalist>
+          <div className="error-container">
+            <p className={`error-message ${errors.country && 'show-error'}`}>
+              {errors.country && errors.country}
+            </p>
+          </div>
+        </div>
 
-        {errors.country && <p>{errors.country}</p>}
+        <div className="flex-new-line"></div>
 
-        <button>Submit</button>
+        <div className="input-group">
+          <p>Gender</p>
+          <div className="radio-gender">
+            <label htmlFor="male">Male</label>
+            <input
+              onChange={() => isButtonActive('gender')}
+              ref={genderMaleRef}
+              type="radio"
+              id="male"
+              name="gender"
+              value="male"
+            />
+            <label htmlFor="female">Female</label>
+            <input
+              onChange={() => isButtonActive('')}
+              ref={genderFemaleRef}
+              type="radio"
+              id="female"
+              name="gender"
+              value="female"
+            />
+          </div>
+          <div className="error-container">
+            <p className={`error-message ${errors.gender && 'show-error'}`}>
+              {errors.gender && errors.gender}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex-new-line"></div>
+
+        <div className="input-group">
+          <label htmlFor="img">Image</label>
+          <input
+            className="image-input"
+            ref={imgRef}
+            type="file"
+            id="img"
+            onChange={(e) => {
+              handleFileChange(e);
+              isButtonActive('img');
+            }}
+          />
+          <div className="error-container">
+            <p className={`error-message ${errors.img && 'show-error'}`}>
+              {errors.img && errors.img}
+            </p>
+          </div>
+        </div>
+
+        <div className="input-group w100">
+          <div className="check-terms">
+            <label htmlFor="terms">I accept the terms</label>
+            <input
+              onChange={() => isButtonActive('terms')}
+              ref={termsRef}
+              type="checkbox"
+              id="terms"
+              name="terms"
+            />
+            <div className="error-container">
+              <p className={`error-message ${errors.terms && 'show-error'}`}>
+                {errors.terms && errors.terms}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button disabled={isDisable} className="submit-button">
+          Submit
+        </button>
+        <p className="disable-button-text">
+          {isDisable ? 'fill all fields, please' : ''}
+        </p>
       </form>
     </div>
   );

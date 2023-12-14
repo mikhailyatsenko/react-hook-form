@@ -7,7 +7,12 @@ export const validationShema = yup.object({
     .string()
     .required('It is required field')
     .matches(/^[A-Z]/, 'Name should start with Uppercase'),
-  age: yup.number().required('It is required field').positive(),
+  age: yup
+    .number()
+    .required('Age is a required field')
+    .typeError('Amount must be a number')
+    .positive('Age must be a positive number')
+    .integer('Age must be an integer'),
   email: yup.string().required('It is required field').email(),
   password: yup
     .string()

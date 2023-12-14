@@ -40,7 +40,7 @@ const Controlled = () => {
     register,
     trigger,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = form;
 
   const onSubmit: SubmitHandler<Form> = async (data) => {
@@ -62,42 +62,111 @@ const Controlled = () => {
   };
 
   return (
-    <div>
-      <p>controlled</p>
+    <div className="form-container">
+      <p>Controlled form with &quot;React Hook Form&quot;</p>
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FormField name="name" type="text" error={errors.name?.message} />
-          <FormField name="age" type="number" error={errors.age?.message} />
-          <FormField name="email" type="email" error={errors.email?.message} />
+        <form className="form" onSubmit={handleSubmit(onSubmit)}>
           <FormField
+            labelText={'Name'}
+            name="name"
+            type="text"
+            error={errors.name?.message}
+          />
+          <FormField
+            labelText={'Age'}
+            name="age"
+            type="number"
+            error={errors.age?.message}
+          />
+          <FormField
+            labelText={'Email'}
+            name="email"
+            type="email"
+            error={errors.email?.message}
+          />
+          <FormField
+            labelText={'Password'}
             name="password"
             type="password"
             error={errors.password?.message}
           />
           <FormField
+            labelText={'Repeat password'}
             name="passwordConfirm"
             type="password"
             error={errors.passwordConfirm?.message}
           />
 
-          <p>Gender</p>
-          <div>
-            <FormField name="gender" type="radio" value="male" />
-            <FormField name="gender" type="radio" value="female" />
+          <div className="input-group">
+            <label htmlFor="country">Country</label>
+            <input
+              {...register('country')}
+              list="countries"
+              name="country"
+              id="country"
+            />
+            <datalist id="countries">
+              {countries.map((country, index) => {
+                return (
+                  <option key={index} value={country}>
+                    {country}
+                  </option>
+                );
+              })}
+            </datalist>
+
+            <div className="error-container">
+              <p className={`error-message ${errors.country && 'show-error'}`}>
+                {errors.country?.message && errors.country.message}
+              </p>
+            </div>
           </div>
-          <p>{errors.gender?.message}</p>
 
-          <FormField
-            name="terms"
-            type="checkbox"
-            error={errors.terms?.message}
-          />
+          <div className="input-group w100">
+            <p>Gender</p>
+            <div className="radio-gender">
+              <FormField
+                labelText={'Male'}
+                name="gender"
+                type="radio"
+                value="male"
+              />
+              <FormField
+                labelText={'Female'}
+                name="gender"
+                type="radio"
+                value="female"
+              />
+            </div>
+            <div className="error-container">
+              <p
+                className={`error-message ${
+                  errors.gender?.message && 'show-error'
+                }`}
+              >
+                {errors.gender?.message && errors.gender?.message}
+              </p>
+            </div>
+          </div>
+          <div className="flex-new-line"></div>
 
-          <label htmlFor="image">Image</label>
-          <input type="file" id="image" onChange={(e) => handleFileChange(e)} />
-          <p>{errors.img?.message}</p>
+          <div className="input-group">
+            <label htmlFor="img">Image</label>
+            <input
+              className="flex-self-center"
+              type="file"
+              id="img"
+              onChange={(e) => handleFileChange(e)}
+            />
 
-          <label htmlFor="country">Country</label>
+            <div className="error-container">
+              <p className={`error-message ${errors.img && 'show-error'}`}>
+                {errors.img?.message && errors.img.message}
+              </p>
+            </div>
+          </div>
+
+          {/* <label htmlFor="country">Country</label>
           <select {...register('country')} name="country" id="country">
             {countries.map((country, index) => {
               return (
@@ -107,9 +176,43 @@ const Controlled = () => {
               );
             })}
           </select>
-          <p>{errors.country?.message}</p>
+          <p>{errors.country?.message}</p> */}
+          {/* <div className="check-terms">
+            <FormField labelText={}
+              name="terms"
+              type="checkbox"
+              value="I accept the terms
+              "
+              error={errors.terms?.message}
+            />
+          </div> */}
+          <div className="flex-new-line"></div>
 
-          <button>Submit</button>
+          <div className="input-group">
+            <div className="check-terms">
+              <label htmlFor="terms">I accept the terms</label>
+              <input
+                {...register('terms')}
+                type="checkbox"
+                id="terms"
+                name="terms"
+              />
+              <div className="error-container">
+                <p className={`error-message ${errors.terms && 'show-error'}`}>
+                  {errors.terms?.message && errors.terms?.message}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-new-line"></div>
+
+          <button disabled={!isValid} className="submit-button">
+            Submit
+          </button>
+          <p className="disable-button-text">
+            {isValid ? '' : 'fill all fields, please'}
+          </p>
         </form>
       </FormProvider>
     </div>

@@ -1,19 +1,31 @@
 import { Outlet } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-import './App.css';
+import './App.scss';
 
 function App() {
   return (
-    <main>
-      {/* <h1>Choose the form:</h1> */}
+    <>
       <nav>
-        <Link to="/">Main</Link>
-        <Link to="/controlled">Controlled</Link>
-        <Link to="/uncontrolled">Uncontrolled form</Link>
+        <Link className="link-menu" to="/">
+          Main Page
+        </Link>
+        <Link className="link-menu" to="/controlled">
+          React Hook Form
+        </Link>
+        <Link className="link-menu" to="/uncontrolled">
+          Uncontrolled form
+        </Link>
       </nav>
-      <Outlet />
-    </main>
+
+      <main>
+        <div className="container">
+          {/* <h1>Choose the form:</h1> */}
+
+          <Outlet />
+        </div>
+      </main>
+    </>
   );
 }
 
