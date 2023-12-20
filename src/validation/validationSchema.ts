@@ -16,22 +16,19 @@ export const validationShema = yup.object({
   email: yup.string().required('It is required field').email(),
   password: yup
     .string()
-    .required('It is required field')
+    .required('Password is required')
     .matches(
-      /[0-9]/,
-      'Password should contain at least one digit, one lowercase letter, one uppercase letter and special character'
+      /^(?=.*[a-z])/,
+      'Password must contain at least one lowercase letter'
     )
     .matches(
-      /[a-z]/,
-      'Password should contain at least one digit, one lowercase letter, one uppercase letter and special character'
+      /^(?=.*[A-Z])/,
+      'Password must contain at least one uppercase letter'
     )
+    .matches(/^(?=.*\d)/, 'Password must contain at least one number')
     .matches(
-      /[A-Z]/,
-      'Password should contain at least one digit, one lowercase letter, one uppercase letter and special character'
-    )
-    .matches(
-      /[!@#$%^&*]/,
-      'Password should contain at least one digit, one lowercase letter, one uppercase letter and special character'
+      /^(?=.*[\W_])/,
+      'Password must contain at least one special character'
     ),
   passwordConfirm: yup
     .string()
