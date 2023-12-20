@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Main = () => {
   const { data } = useAppSelector((state) => state.formDataReducer);
+  const lastFormData = data.length - 1;
   return (
     <>
       {!data.length ? (
@@ -24,7 +25,10 @@ const Main = () => {
       ) : (
         <div className="cards-list">
           {data.map((el, key) => (
-            <div key={key} className="card-info">
+            <div
+              key={key}
+              className={`card-info${lastFormData === key ? ' anim-card' : ''}`}
+            >
               <div className="image-div">
                 <img className="image" src={el.img} />
               </div>

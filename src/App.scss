@@ -37,11 +37,7 @@ nav {
       height: 400px;
       .menu-items {
         position: absolute;
-        // top: 0;top
-        // left: 0;left
-        // padding-top: 72px;padding-top
         font-size: 26px;
-        line-height: 2.5;
         display: flex;
         flex-direction: column;
       }
@@ -273,5 +269,18 @@ label[for='img'] {
     .line3 {
       transform: rotate(-45deg);
     }
+  }
+}
+
+.anim-card {
+  animation: 1s show ease;
+}
+
+@keyframes show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
