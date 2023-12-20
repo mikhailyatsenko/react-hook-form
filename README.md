@@ -19,7 +19,7 @@ TypeScript, Vite (React), React Hook Form, Yup, React Router, Redux Toolkit, ESL
    - input control to upload picture (validate size and extension, allow png jpeg, save in redux store as base64)
    - autocomplete control to select country (all countries stored in the Redux store)
 4. Validation
-   It is used **Yup** for validation. 
+    **Yup** used for validation. 
    - In uncontrolled components implemented validation on submit
    - In approach with **React Hook Form** implemented live validation
 5. After submitting the form
