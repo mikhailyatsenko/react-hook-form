@@ -1,30 +1,26 @@
-# React + TypeScript + Vite
+### Write stack: 
+TypeScript, Vite (React), React Hook Form, Yup, React Router, Redux Toolkit, ESLint, Prettier, Husky.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### What was done:
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-};
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+1. Routing. There is 3 routes:
+   - Main, has links to other 2 routes
+   - Route for the form created using uncontrolled components approach
+   - Route for the similar form, but created with the help of the **React Hook Form**
+2. Redux. Redux is used to store the data provided by both approaches on the Main route. 
+3. Forms
+   Both forms are collected the same data:
+   - name (validate for first uppercased letter)
+   - age (should be number, no negative values)
+   - email (validate for email)
+   - 2 passwords (should match, display the password strength: 1 number, 1 uppercased letter, 1 lowercased letter, 1 special character)
+   - gender (radio buttons)
+   - accept T&C (checkbox)
+   - input control to upload picture (validate size and extension, allow png jpeg, save in redux store as base64)
+   - autocomplete control to select country (all countries stored in the Redux store)
+4. Validation
+   It is used **Yup** for validation. 
+   - In uncontrolled components implemented validation on submit
+   - In approach with **React Hook Form** implemented live validation
+5. After submitting the form
+    On successful form submission user redirect to the main route with all the previously entered data.
