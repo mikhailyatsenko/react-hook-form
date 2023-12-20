@@ -6,6 +6,7 @@ import { ValidationError } from 'yup';
 import { fileConverter } from '../helpers/fileConverter';
 import { useNavigate } from 'react-router';
 import { setData } from '../store/reducers/formDataSlice';
+import { Form } from '../types/types';
 
 const Uncontrolled = () => {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -25,18 +26,6 @@ const Uncontrolled = () => {
   const [isDisable, setIsDisable] = useState(true);
 
   const dispatch = useAppDispatch();
-
-  interface Form {
-    name: string | undefined;
-    age: number | undefined;
-    email: string | undefined;
-    password: string | undefined;
-    passwordConfirm: string | undefined;
-    country: string | undefined;
-    gender: string | undefined;
-    terms: boolean | undefined;
-    img: File | undefined;
-  }
 
   interface Errors {
     name?: string;
@@ -90,7 +79,7 @@ const Uncontrolled = () => {
     const isValidate = await validateData(data);
 
     if (isValidate && data.img) {
-      const base64Image = await fileConverter(data.img);
+      const base64Image = await fileConverter(data.img as File);
       const newData = { ...data, img: base64Image };
 
       dispatch(setData(newData));

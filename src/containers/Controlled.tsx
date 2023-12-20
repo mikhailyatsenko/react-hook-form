@@ -8,22 +8,7 @@ import { useAppSelector } from '../store';
 import { setData } from '../store/reducers/formDataSlice';
 import FormField from '../components/FormField';
 import { useNavigate } from 'react-router';
-
-interface Form {
-  name: string;
-  age: number;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-  country: string;
-  gender: string;
-  terms: boolean;
-  img?: unknown | File;
-}
-
-// interface FormWithBase64Img extends Form {
-//   img: string;
-// }
+import { Form } from '../types/types';
 
 const Controlled = () => {
   const { countries } = useAppSelector((store) => store.CountriesListSlice);
